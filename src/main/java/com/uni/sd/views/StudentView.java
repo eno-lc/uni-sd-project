@@ -31,6 +31,8 @@ import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import javax.annotation.security.PermitAll;
+
 @PageTitle("Students")
 @Route(value = "students/:StudentID?/:action?(edit)", layout = MainLayout.class)
 @RouteAlias(value = "students", layout = MainLayout.class)

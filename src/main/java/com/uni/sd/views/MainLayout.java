@@ -51,6 +51,7 @@ public class MainLayout extends AppLayout {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
 
+        nav.addItem(new AppNavItem("Home", HomeView.class, "la la-columns"));
         nav.addItem(new AppNavItem("Students", StudentView.class, "la la-columns"));
         nav.addItem(new AppNavItem("Professors", ProfessorView.class, "la la-columns"));
         nav.addItem(new AppNavItem("Communication", ChatView.class, "la la-columns"));
