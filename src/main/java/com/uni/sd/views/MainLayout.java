@@ -37,10 +37,13 @@ public class MainLayout extends AppLayout {
         Button logout = new Button("Log out", event -> securityService.logout());
         logout.addClassName("logout-button");
 
+        Button profile = new Button("Profile", event -> UI.getCurrent().navigate("my-profile"));
+        profile.addClassName("profile-button");
+
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle, logout);
+        addToNavbar(true, toggle, viewTitle, profile ,logout);
     }
 
     private void addDrawerContent() {
