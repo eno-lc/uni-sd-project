@@ -3,7 +3,6 @@ package com.uni.sd.views;
 
 import com.uni.sd.components.appnav.AppNav;
 import com.uni.sd.components.appnav.AppNavItem;
-import com.uni.sd.views.masterdetail.MasterDetailView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Footer;
@@ -38,7 +37,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void addDrawerContent() {
-        H1 appName = new H1("UNI-SD-Project");
+        H1 appName = new H1("Harvard University");
         appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
         Header header = new Header(appName);
 
@@ -52,7 +51,9 @@ public class MainLayout extends AppLayout {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
 
-        nav.addItem(new AppNavItem("Master-Detail", MasterDetailView.class, "la la-columns"));
+        nav.addItem(new AppNavItem("Students", StudentView.class, "la la-columns"));
+        nav.addItem(new AppNavItem("Professors", ProfessorView.class, "la la-columns"));
+        nav.addItem(new AppNavItem("Communication", ChatView.class, "la la-columns"));
 
         return nav;
     }

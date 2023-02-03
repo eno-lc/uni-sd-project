@@ -1,26 +1,30 @@
 package com.uni.sd.data.service;
 
-import com.uni.sd.data.entity.SamplePerson;
-import java.util.Optional;
+import com.uni.sd.data.entity.Professor;
+import com.uni.sd.data.entity.Student;
+import com.uni.sd.data.repository.ProfessorRepository;
+import com.uni.sd.data.repository.StudentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class SamplePersonService {
+public class ProfessorService {
 
-    private final SamplePersonRepository repository;
+    private final ProfessorRepository repository;
 
-    public SamplePersonService(SamplePersonRepository repository) {
+    public ProfessorService(ProfessorRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<SamplePerson> get(Long id) {
+    public Optional<Professor> get(Long id) {
         return repository.findById(id);
     }
 
-    public SamplePerson update(SamplePerson entity) {
+    public Professor update(Professor entity) {
         return repository.save(entity);
     }
 
@@ -28,11 +32,11 @@ public class SamplePersonService {
         repository.deleteById(id);
     }
 
-    public Page<SamplePerson> list(Pageable pageable) {
+    public Page<Professor> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
+    public Page<Professor> list(Pageable pageable, Specification<Professor> filter) {
         return repository.findAll(filter, pageable);
     }
 
