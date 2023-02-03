@@ -1,15 +1,20 @@
 package com.uni.sd;
 
+import com.uni.sd.data.entity.User;
 import com.uni.sd.data.repository.StudentRepository;
+import com.uni.sd.data.repository.UserRepository;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
 import javax.sql.DataSource;
+
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
 import org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * The entry point of the Spring Boot application.
@@ -42,4 +47,11 @@ public class Application implements AppShellConfigurator {
             }
         };
     }
+
+//    @Bean
+//    CommandLineRunner commandLineRunner(UserRepository users, PasswordEncoder encoder) {
+//        return args -> {
+//            users.save(new User("admin", encoder.encode("password"), "ROLE_ADMIN"));
+//        };
+//    }
 }

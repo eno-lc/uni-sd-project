@@ -1,12 +1,13 @@
 package com.uni.sd.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.theme.lumo.LumoUtility.*;
 
 public class HomeListViewCard extends ListItem {
 
-    public HomeListViewCard(String text, String url, String professor) {
+    public HomeListViewCard(String text, String url, String professor, Class className) {
         addClassNames(Background.CONTRAST_5, Display.FLEX, FlexDirection.COLUMN, AlignItems.START, Padding.MEDIUM,
                 BorderRadius.LARGE);
 
@@ -31,11 +32,12 @@ public class HomeListViewCard extends ListItem {
         subtitle.setText(professor);
 
 
-        Button badge = new Button();
-        badge.getElement().setAttribute("theme", "badge");
-        badge.setText("Visit");
+        Button button = new Button();
+        button.getElement().setAttribute("theme", "badge");
+        button.setText("Visit");
+        button.addClickListener(event -> UI.getCurrent().navigate(className));
 
-        add(div, header, subtitle, badge);
+        add(div, header, subtitle, button);
 
     }
 }

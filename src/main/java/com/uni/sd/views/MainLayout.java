@@ -3,8 +3,11 @@ package com.uni.sd.views;
 
 import com.uni.sd.components.appnav.AppNav;
 import com.uni.sd.components.appnav.AppNavItem;
+import com.uni.sd.security.SecurityService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -19,8 +22,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
-
-    public MainLayout() {
+    private final SecurityService securityService;
+    public MainLayout(SecurityService securityService) {
+        this.securityService = securityService;
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
@@ -30,10 +34,13 @@ public class MainLayout extends AppLayout {
         DrawerToggle toggle = new DrawerToggle();
         toggle.getElement().setAttribute("aria-label", "Menu toggle");
 
+        Button logout = new Button("Log out", event -> securityService.logout());
+        logout.addClassName("logout-button");
+
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle);
+        addToNavbar(true, toggle, viewTitle, logout);
     }
 
     private void addDrawerContent() {

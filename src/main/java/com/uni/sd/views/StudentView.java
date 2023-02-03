@@ -37,6 +37,7 @@ import javax.annotation.security.PermitAll;
 @Route(value = "students/:StudentID?/:action?(edit)", layout = MainLayout.class)
 @RouteAlias(value = "students", layout = MainLayout.class)
 @Uses(Icon.class)
+@PermitAll
 public class StudentView extends Div implements BeforeEnterObserver {
 
     private final String Student_ID = "StudentID";

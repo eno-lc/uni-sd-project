@@ -25,12 +25,14 @@ import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import javax.annotation.security.PermitAll;
 import java.util.Optional;
 
 @PageTitle("Professors")
 @Route(value = "professors/:ProfessorID?/:action?(edit)", layout = MainLayout.class)
 @RouteAlias(value = "professors", layout = MainLayout.class)
 @Uses(Icon.class)
+@PermitAll
 public class ProfessorView extends Div implements BeforeEnterObserver{
 
     private final String Professor_ID = "ProfessorID";

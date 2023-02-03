@@ -29,10 +29,13 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import com.vaadin.flow.theme.lumo.LumoUtility.Overflow;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.Width;
+
+import javax.annotation.security.PermitAll;
 import java.util.UUID;
 
 @PageTitle("Chat")
 @Route(value = "chat", layout = MainLayout.class)
+@PermitAll
 public class ChatView extends HorizontalLayout {
 
     public static class ChatTab extends Tab {
