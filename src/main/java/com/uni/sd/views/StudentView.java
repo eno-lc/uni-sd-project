@@ -73,15 +73,14 @@ public class StudentView extends Div implements BeforeEnterObserver {
         this.userService = userService;
         addClassNames("master-detail-view");
 
-        // Create UI
+        userType = new ComboBox<>("User Type");
+        roles = new ComboBox<>("Roles");
+
         SplitLayout splitLayout = new SplitLayout();
 
         createGridLayout(splitLayout);
-        createEditorLayout(splitLayout);
-
         add(getToolbar(),splitLayout);
 
-        // Configure Grid
         grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
@@ -109,12 +108,6 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
         delete.addClickListener(e -> confirmDialog.open());
 
-//        grid.setItems(query -> StudentService.list(
-//                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-//                .stream());
-
-
-        //set grid items to users that are of user type student
         grid.setItems(query -> userService.findAllUsers().stream()
                 .filter(user -> user.getUserType().equals("Student"))
                 .skip(query.getPage() * query.getPageSize())
@@ -179,54 +172,6 @@ public class StudentView extends Div implements BeforeEnterObserver {
         }
     }
 
-    private void createEditorLayout(SplitLayout splitLayout) {
-        Div editorLayoutDiv = new Div();
-        editorLayoutDiv.setClassName("editor-layout");
-
-        Div editorDiv = new Div();
-        editorDiv.setClassName("editor");
-        editorLayoutDiv.add(editorDiv);
-
-        FormLayout formLayout = new FormLayout();
-        username = new TextField("Username");
-        firstName = new TextField("First Name");
-        lastName = new TextField("Last Name");
-        email = new TextField("Email");
-        userType = new ComboBox<>("User Type");
-        roles = new ComboBox<>("Roles");
-        formLayout.add(username, firstName, lastName, email, userType, roles);
-
-        editorDiv.add(formLayout);
-        var name = SecurityContextHolder.getContext().getAuthentication();
-        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
-            editorLayoutDiv.setVisible(false);
-            editorDiv.setVisible(false);
-
-        }else{
-            editorLayoutDiv.setVisible(true);
-            editorDiv.setVisible(true);
-            createButtonLayout(editorLayoutDiv);
-            splitLayout.addToSecondary(editorLayoutDiv);
-        }
-    }
-
-    private void createButtonLayout(Div editorLayoutDiv) {
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setClassName("button-layout");
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        var name = SecurityContextHolder.getContext().getAuthentication();
-        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
-            buttonLayout.setVisible(false);
-            editorLayoutDiv.setVisible(false);
-        }else{
-            editorLayoutDiv.setVisible(true);
-            buttonLayout.setVisible(true);
-            buttonLayout.add(save, cancel, delete);
-            editorLayoutDiv.add(buttonLayout);
-        }
-    }
 
     private void createGridLayout(SplitLayout splitLayout) {
         Div wrapper = new Div();
@@ -252,7 +197,10 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
 
     private void updateList() {
-        grid.setItems(userService.findAllUsers(filterText.getValue()));
+        grid.setItems(query -> this.userService.findAllUsers(filterText.getValue()).stream()
+                .filter(user -> user.getUserType().equals("Student"))
+                .skip(query.getPage() * query.getPageSize())
+                .limit(query.getPageSize()));
     }
 
     private Component getToolbar() {

@@ -74,15 +74,12 @@ public class StaffView extends Div implements BeforeEnterObserver {
         this.userService = userService;
         addClassNames("master-detail-view");
 
-        // Create UI
         SplitLayout splitLayout = new SplitLayout();
 
         createGridLayout(splitLayout);
-        createEditorLayout(splitLayout);
 
         add(getToolbar(),splitLayout);
 
-        // Configure Grid
         grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
@@ -90,6 +87,9 @@ public class StaffView extends Div implements BeforeEnterObserver {
         grid.addColumn("userType").setAutoWidth(true);
         grid.addColumn("roles").setAutoWidth(true);
 
+
+        userType = new ComboBox<>("User Type");
+        roles = new ComboBox<>("Roles");
         userType.setItems("Student", "Professor", "Staff");
         roles.setItems("ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER");
 
@@ -101,7 +101,6 @@ public class StaffView extends Div implements BeforeEnterObserver {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 UI.getCurrent().navigate(String.format(Staff_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
@@ -111,11 +110,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
             }
         });
 
-        // Configure Form
         binder = new BeanValidationBinder<>(Staff.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -164,38 +159,6 @@ public class StaffView extends Div implements BeforeEnterObserver {
         }
     }
 
-    private void createEditorLayout(SplitLayout splitLayout) {
-        Div editorLayoutDiv = new Div();
-        editorLayoutDiv.setClassName("editor-layout");
-
-        Div editorDiv = new Div();
-        editorDiv.setClassName("editor");
-        editorLayoutDiv.add(editorDiv);
-
-        FormLayout formLayout = new FormLayout();
-        username = new TextField("Username");
-        firstName = new TextField("First Name");
-        lastName = new TextField("Last Name");
-        email = new TextField("Email");
-        userType = new ComboBox<>("User Type");
-        roles = new ComboBox<>("Roles");
-        formLayout.add(username, firstName, lastName, email, userType, roles);
-
-
-        editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
-
-        splitLayout.addToSecondary(editorLayoutDiv);
-    }
-
-    private void createButtonLayout(Div editorLayoutDiv) {
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setClassName("button-layout");
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
-        editorLayoutDiv.add(buttonLayout);
-    }
 
     private void createGridLayout(SplitLayout splitLayout) {
         Div wrapper = new Div();
@@ -220,7 +183,10 @@ public class StaffView extends Div implements BeforeEnterObserver {
     }
 
     private void updateList() {
-        grid.setItems(userService.findAllUsers(filterText.getValue()));
+        grid.setItems(query -> this.userService.findAllUsers(filterText.getValue()).stream()
+                .filter(user -> user.getUserType().equals("Staff"))
+                .skip(query.getPage() * query.getPageSize())
+                .limit(query.getPageSize()));
     }
 
     private Component getToolbar() {
