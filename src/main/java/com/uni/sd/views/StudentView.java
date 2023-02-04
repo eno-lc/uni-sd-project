@@ -3,9 +3,11 @@ package com.uni.sd.views;
 import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.service.StudentService;
 import com.uni.sd.views.MainLayout;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -21,6 +23,7 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -30,6 +33,7 @@ import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -54,10 +58,11 @@ public class StudentView extends Div implements BeforeEnterObserver {
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
 
+    private final Button delete = new Button("Delete");
     private final BeanValidationBinder<Student> binder;
 
     private Student Student;
-
+    TextField filterText = new TextField();
     private final StudentService StudentService;
 
     public StudentView(StudentService StudentService) {
@@ -70,7 +75,7 @@ public class StudentView extends Div implements BeforeEnterObserver {
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
-        add(splitLayout);
+        add(getToolbar(),splitLayout);
 
         // Configure Grid
         grid.addColumn("firstName").setAutoWidth(true);
@@ -79,7 +84,22 @@ public class StudentView extends Div implements BeforeEnterObserver {
         grid.addColumn("phone").setAutoWidth(true);
         grid.addColumn("dateOfBirth").setAutoWidth(true);
 
+        ConfirmDialog confirmDialog = new ConfirmDialog();
+        confirmDialog.setConfirmButtonTheme("error primary");
+        confirmDialog.setHeader("Confirmation");
+        confirmDialog.setText("Are you sure you want to delete this student?");
+        confirmDialog.setConfirmButton("Delete", e -> {
+            if (this.Student != null && this.Student.getId() != null) {
+                StudentService.delete(this.Student.getId());
+                clearForm();
+                refreshGrid();
+                Notification.show("Data deleted");
+                UI.getCurrent().navigate(StudentView.class);
+            }
+        });
+        confirmDialog.setCancelButton("Cancel", e -> confirmDialog.close());
 
+        delete.addClickListener(e -> confirmDialog.open());
 
         grid.setItems(query -> StudentService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
@@ -166,9 +186,17 @@ public class StudentView extends Div implements BeforeEnterObserver {
         formLayout.add(firstName, lastName, email, phone, dateOfBirth);
 
         editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
+        var name = SecurityContextHolder.getContext().getAuthentication();
+        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
+            editorLayoutDiv.setVisible(false);
+            editorDiv.setVisible(false);
 
-        splitLayout.addToSecondary(editorLayoutDiv);
+        }else{
+            editorLayoutDiv.setVisible(true);
+            editorDiv.setVisible(true);
+            createButtonLayout(editorLayoutDiv);
+            splitLayout.addToSecondary(editorLayoutDiv);
+        }
     }
 
     private void createButtonLayout(Div editorLayoutDiv) {
@@ -176,8 +204,17 @@ public class StudentView extends Div implements BeforeEnterObserver {
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
-        editorLayoutDiv.add(buttonLayout);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        var name = SecurityContextHolder.getContext().getAuthentication();
+        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
+            buttonLayout.setVisible(false);
+            editorLayoutDiv.setVisible(false);
+        }else{
+            editorLayoutDiv.setVisible(true);
+            buttonLayout.setVisible(true);
+            buttonLayout.add(save, cancel, delete);
+            editorLayoutDiv.add(buttonLayout);
+        }
     }
 
     private void createGridLayout(SplitLayout splitLayout) {
@@ -199,6 +236,25 @@ public class StudentView extends Div implements BeforeEnterObserver {
     private void populateForm(Student value) {
         this.Student = value;
         binder.readBean(this.Student);
+
+    }
+
+    private void updateList() {
+        grid.setItems(StudentService.findALlStudents(filterText.getValue()));
+    }
+
+    private Component getToolbar() {
+
+        filterText.setPlaceholder("Filter by student name...");
+        filterText.setClearButtonVisible(true);
+        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        filterText.addValueChangeListener(e -> updateList());
+        filterText.setWidth("250px");
+
+        HorizontalLayout toolbarHorizontalLayout = new HorizontalLayout(filterText);
+        toolbarHorizontalLayout.addClassName("toolbar");
+
+        return toolbarHorizontalLayout;
 
     }
 }

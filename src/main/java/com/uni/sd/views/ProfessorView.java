@@ -3,9 +3,11 @@ package com.uni.sd.views;
 
 import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.service.ProfessorService;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -20,10 +22,12 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -50,9 +54,10 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
+    private final Button delete = new Button("Delete");
 
     private final BeanValidationBinder<Professor> binder;
-
+    TextField filterText = new TextField();
     private Professor professor;
 
     private final ProfessorService professorService;
@@ -67,7 +72,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
 
-        add(splitLayout);
+        add(getToolbar(),splitLayout);
 
         // Configure Grid
         grid.addColumn("firstName").setAutoWidth(true);
@@ -76,6 +81,23 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         grid.addColumn("phone").setAutoWidth(true);
         grid.addColumn("dateOfBirth").setAutoWidth(true);
 
+
+        ConfirmDialog confirmDialog = new ConfirmDialog();
+        confirmDialog.setConfirmButtonTheme("error primary");
+        confirmDialog.setHeader("Confirmation");
+        confirmDialog.setText("Are you sure you want to delete this professor?");
+        confirmDialog.setConfirmButton("Delete", e -> {
+            if (this.professor != null && this.professor.getId() != null) {
+                professorService.delete(this.professor.getId());
+                clearForm();
+                refreshGrid();
+                Notification.show("Data deleted");
+                UI.getCurrent().navigate(ProfessorView.class);
+            }
+        });
+        confirmDialog.setCancelButton("Cancel", e -> confirmDialog.close());
+
+        delete.addClickListener(e -> confirmDialog.open());
 
 
         grid.setItems(query -> professorService.list(
@@ -161,11 +183,19 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         phone = new TextField("Phone");
         dateOfBirth = new DatePicker("Date Of Birth");
         formLayout.add(firstName, lastName, email, phone, dateOfBirth);
-
         editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
 
-        splitLayout.addToSecondary(editorLayoutDiv);
+        var name = SecurityContextHolder.getContext().getAuthentication();
+        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
+            editorLayoutDiv.setVisible(false);
+            editorDiv.setVisible(false);
+
+        }else{
+            editorLayoutDiv.setVisible(true);
+            editorDiv.setVisible(true);
+            createButtonLayout(editorLayoutDiv);
+            splitLayout.addToSecondary(editorLayoutDiv);
+        }
     }
 
     private void createButtonLayout(Div editorLayoutDiv) {
@@ -173,8 +203,18 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
-        editorLayoutDiv.add(buttonLayout);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        var name = SecurityContextHolder.getContext().getAuthentication();
+        if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"))) {
+            buttonLayout.setVisible(false);
+            editorLayoutDiv.setVisible(false);
+        }else{
+            editorLayoutDiv.setVisible(true);
+            buttonLayout.setVisible(true);
+            buttonLayout.add(save, cancel, delete);
+            editorLayoutDiv.add(buttonLayout);
+        }
     }
 
     private void createGridLayout(SplitLayout splitLayout) {
@@ -196,6 +236,24 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     private void populateForm(Professor value) {
         this.professor = value;
         binder.readBean(this.professor);
+
+    }
+
+    private void updateList() {
+        grid.setItems(professorService.findAllProfessors(filterText.getValue()));
+    }
+
+    private Component getToolbar() {
+
+        filterText.setPlaceholder("Filter by professor name...");
+        filterText.setClearButtonVisible(true);
+        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        filterText.addValueChangeListener(e -> updateList());
+        filterText.setWidth("250px");
+        HorizontalLayout toolbarHorizontalLayout = new HorizontalLayout(filterText);
+        toolbarHorizontalLayout.addClassName("toolbar");
+
+        return toolbarHorizontalLayout;
 
     }
 }

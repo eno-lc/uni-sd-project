@@ -37,7 +37,7 @@ public class MainLayout extends AppLayout {
         Button logout = new Button("Log out", event -> securityService.logout());
         logout.addClassName("logout-button");
 
-        Button profile = new Button("Profile", event -> UI.getCurrent().navigate("my-profile"));
+        Button profile = new Button("Profile", event -> UI.getCurrent().navigate("profile"));
         profile.addClassName("profile-button");
 
         viewTitle = new H2();
@@ -67,6 +67,7 @@ public class MainLayout extends AppLayout {
         nav.addItem(new AppNavItem("Professors", ProfessorView.class, "la la-user"));
         nav.addItem(new AppNavItem("Communication", ChatView.class, "la la-comment"));
         nav.addItem(new AppNavItem("Staff", StaffView.class, "la la-user"));
+        nav.addItem(new AppNavItem("User Management", UserView.class, "la la-user"));
 
         return nav;
     }

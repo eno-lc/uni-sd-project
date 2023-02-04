@@ -1,5 +1,6 @@
 package com.uni.sd.data.service;
 
+import com.uni.sd.data.entity.Grade;
 import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.repository.ProfessorRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +40,15 @@ public class ProfessorService {
 
     public Page<Professor> list(Pageable pageable, Specification<Professor> filter) {
         return repository.findAll(filter, pageable);
+    }
+
+    public List<Professor> findAllProfessors(String filterText){
+
+        if(filterText == null || filterText.isEmpty()){
+            return repository.findAll();
+        } else {
+            return repository.search(filterText);
+        }
     }
 
     public int count() {

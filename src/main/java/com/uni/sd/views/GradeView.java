@@ -250,6 +250,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
+        filterText.setWidth("250px");
 
         HorizontalLayout toolbarHorizontalLayout = new HorizontalLayout(filterText);
         toolbarHorizontalLayout.addClassName("toolbar");

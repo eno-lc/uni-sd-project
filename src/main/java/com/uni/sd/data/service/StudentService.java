@@ -1,6 +1,9 @@
 package com.uni.sd.data.service;
 
+import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.entity.Student;
+
+import java.util.List;
 import java.util.Optional;
 
 import com.uni.sd.data.repository.StudentRepository;
@@ -40,6 +43,15 @@ public class StudentService {
 
     public int count() {
         return (int) repository.count();
+    }
+
+    public List<Student> findALlStudents(String filterText){
+
+        if(filterText == null || filterText.isEmpty()){
+            return repository.findAll();
+        } else {
+            return repository.search(filterText);
+        }
     }
 
 }

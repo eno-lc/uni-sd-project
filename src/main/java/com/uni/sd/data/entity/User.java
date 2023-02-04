@@ -17,8 +17,17 @@ public class User extends AbstractEntity {
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate birthday;
     private String email;
+    private String userType;
 
-    public User(String username, String password, String roles, String firstName, String lastName, LocalDate birthday, String email) {
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public User(String username, String password, String roles, String firstName, String lastName, LocalDate birthday, String email, String userType) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -26,6 +35,7 @@ public class User extends AbstractEntity {
         this.lastName = lastName;
         this.birthday = birthday;
         this.email = email;
+        this.userType = userType;
     }
 
     public User() {}

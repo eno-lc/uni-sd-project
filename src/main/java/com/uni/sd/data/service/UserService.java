@@ -1,10 +1,13 @@
 package com.uni.sd.data.service;
 
+import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.repository.UserRepository;
 import com.uni.sd.security.SecurityService;
 import com.vaadin.flow.component.notification.Notification;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,8 +47,8 @@ public class UserService implements UserDetailsService {
             return userRepository.search(filterText);
         }
     }
-    public void deleteUser(User user) {
-        userRepository.delete(user);
+    public void deleteUser(long userId) {
+        userRepository.deleteById(userId);
     }
     public void saveUser(User user) {
         if(user == null){
@@ -72,5 +75,11 @@ public class UserService implements UserDetailsService {
     public User getCurrentUser() {
         Optional<User> user =  userRepository.findByUsername(SecurityService.getUsername());
         return user.orElse(null);
+    }
+    public Optional<User> get(Long id) {
+        return userRepository.findById(id);
+    }
+    public Page<User> list(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }

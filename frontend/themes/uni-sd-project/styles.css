@@ -90,5 +90,8 @@
 .toolbar{
     margin-left: 10px;
     margin-top: 10px;
-    width: 200px;
+    width: 250px;
 }
+.filter-text{
+    width: 250px;
+ }

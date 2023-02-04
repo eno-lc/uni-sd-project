@@ -1,5 +1,6 @@
 package com.uni.sd.data.repository;
 
+import com.uni.sd.data.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +12,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByUsername(String username);
 
-    @Query("select u from User u " +
-            "where lower(u.username) like lower(concat('%', :searchTerm, '%')) ")
+    @Query("select c from User c " +
+            "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
+            "or lower(c.lastName) like lower(concat('%', :searchTerm, '%'))")
     List<User> search(@Param("searchTerm") String searchTerm);
 
 
