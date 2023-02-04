@@ -1,7 +1,6 @@
 package com.uni.sd.views;
 
 import com.uni.sd.data.entity.Grade;
-import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.service.GradeService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -30,7 +29,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 
 @PageTitle("Grades")
