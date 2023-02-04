@@ -7,6 +7,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -53,6 +54,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
+    private final Button delete = new Button("Delete");
 
     private final BeanValidationBinder<Grade> binder;
     private final GradeService gradeService;
@@ -99,10 +101,30 @@ public class GradeView extends Div implements BeforeEnterObserver {
         binder = new BeanValidationBinder<>(Grade.class);
         binder.bindInstanceFields(this);
 
+
+        ConfirmDialog confirmDialog = new ConfirmDialog();
+        confirmDialog.setConfirmButtonTheme("error primary");
+        confirmDialog.setHeader("Confirmation");
+        confirmDialog.setText("Are you sure you want to delete this grade?");
+        confirmDialog.setConfirmButton("Delete", e -> {
+            if (this.gradeInstance != null && this.gradeInstance.getId() != null) {
+                gradeService.delete(this.gradeInstance.getId());
+                clearForm();
+                refreshGrid();
+                Notification.show("Data deleted");
+                UI.getCurrent().navigate(GradeView.class);
+            }
+        });
+        confirmDialog.setCancelButton("Cancel", e -> confirmDialog.close());
+
+        delete.addClickListener(e -> confirmDialog.open());
+
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
+
+
 
         save.addClickListener(e -> {
             try {
@@ -183,6 +205,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         var name = SecurityContextHolder.getContext().getAuthentication();
         if (name.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"))) {
             buttonLayout.setVisible(false);
@@ -190,7 +213,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         }else{
             editorLayoutDiv.setVisible(true);
             buttonLayout.setVisible(true);
-            buttonLayout.add(save, cancel);
+            buttonLayout.add(save, cancel, delete);
             editorLayoutDiv.add(buttonLayout);
         }
     }
