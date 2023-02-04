@@ -1,8 +1,7 @@
 package com.uni.sd.views;
 
-import com.uni.sd.data.entity.Student;
-import com.uni.sd.data.service.StudentService;
-import com.uni.sd.views.MainLayout;
+import com.uni.sd.data.entity.Staff;
+import com.uni.sd.data.service.StaffService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -31,19 +30,21 @@ import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 
-@PageTitle("Students")
-@Route(value = "students/:StudentID?/:action?(edit)", layout = MainLayout.class)
-@RouteAlias(value = "students", layout = MainLayout.class)
+@PageTitle("Staff")
+@Route(value = "staff/:StaffID?/:action?(edit)", layout = MainLayout.class)
+@RouteAlias(value = "staff", layout = MainLayout.class)
 @Uses(Icon.class)
-@RolesAllowed({"ADMIN", "MANAGER"})
-public class StudentView extends Div implements BeforeEnterObserver {
+@PermitAll
+@RolesAllowed("ADMIN")
+public class StaffView extends Div implements BeforeEnterObserver {
 
-    private final String Student_ID = "StudentID";
-    private final String Student_EDIT_ROUTE_TEMPLATE = "students/%s/edit";
+    private final String Staff_ID = "StaffID";
+    private final String Staff_EDIT_ROUTE_TEMPLATE = "staff/%s/edit";
 
-    private final Grid<Student> grid = new Grid<>(Student.class, false);
+    private final Grid<Staff> grid = new Grid<>(Staff.class, false);
 
     private TextField firstName;
     private TextField lastName;
@@ -54,14 +55,14 @@ public class StudentView extends Div implements BeforeEnterObserver {
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
 
-    private final BeanValidationBinder<Student> binder;
+    private final BeanValidationBinder<Staff> binder;
 
-    private Student Student;
+    private Staff Staff;
 
-    private final StudentService StudentService;
+    private final StaffService staffService;
 
-    public StudentView(StudentService StudentService) {
-        this.StudentService = StudentService;
+    public StaffView(StaffService staffService) {
+        this.staffService = staffService;
         addClassNames("master-detail-view");
 
         // Create UI
@@ -81,23 +82,23 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
 
 
-        grid.setItems(query -> StudentService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+        grid.setItems(query -> staffService.list(
+                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(Student_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+                UI.getCurrent().navigate(String.format(Staff_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
             } else {
                 clearForm();
-                UI.getCurrent().navigate(StudentView.class);
+                UI.getCurrent().navigate(StaffView.class);
             }
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(Student.class);
+        binder = new BeanValidationBinder<>(Staff.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -110,15 +111,15 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.Student == null) {
-                    this.Student = new Student();
+                if (this.Staff == null) {
+                    this.Staff = new Staff();
                 }
-                binder.writeBean(this.Student);
-                StudentService.update(this.Student);
+                binder.writeBean(this.Staff);
+                staffService.update(this.Staff);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
-                UI.getCurrent().navigate(StudentView.class);
+                UI.getCurrent().navigate(StaffView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error updating the data. Somebody else has updated the record while you were making changes.");
@@ -132,19 +133,19 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<Long> StudentId = event.getRouteParameters().get(Student_ID).map(Long::parseLong);
-        if (StudentId.isPresent()) {
-            Optional<Student> StudentFromBackend = StudentService.get(StudentId.get());
-            if (StudentFromBackend.isPresent()) {
-                populateForm(StudentFromBackend.get());
+        Optional<Long> StaffId = event.getRouteParameters().get(Staff_ID).map(Long::parseLong);
+        if (StaffId.isPresent()) {
+            Optional<Staff> staffFromBackend = staffService.get(StaffId.get());
+            if (staffFromBackend.isPresent()) {
+                populateForm(staffFromBackend.get());
             } else {
                 Notification.show(
-                        String.format("The requested Student was not found, ID = %s", StudentId.get()), 3000,
+                        String.format("The requested Staff memeber was not found, ID = %s", StaffId.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
                 refreshGrid();
-                event.forwardTo(StudentView.class);
+                event.forwardTo(StaffView.class);
             }
         }
     }
@@ -196,9 +197,9 @@ public class StudentView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(Student value) {
-        this.Student = value;
-        binder.readBean(this.Student);
+    private void populateForm(Staff value) {
+        this.Staff = value;
+        binder.readBean(this.Staff);
 
     }
 }

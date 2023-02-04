@@ -65,6 +65,7 @@ public class MainLayout extends AppLayout {
         nav.addItem(new AppNavItem("Students", StudentView.class, "la la-book"));
         nav.addItem(new AppNavItem("Professors", ProfessorView.class, "la la-user"));
         nav.addItem(new AppNavItem("Communication", ChatView.class, "la la-comment"));
+        nav.addItem(new AppNavItem("Staff", StaffView.class, "la la-user"));
 
         return nav;
     }

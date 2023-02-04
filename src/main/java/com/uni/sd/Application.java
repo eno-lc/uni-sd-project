@@ -51,7 +51,9 @@ public class Application implements AppShellConfigurator {
 //    @Bean
 //    CommandLineRunner commandLineRunner(UserRepository users, PasswordEncoder encoder) {
 //        return args -> {
-//            users.save(new User("admin", encoder.encode("password"), "ROLE_ADMIN"));
+//            users.save(new User("student", encoder.encode("password"), "ROLE_USER"));
+//            users.save(new User("professor", encoder.encode("password"), "ROLE_MANAGER"));
+//            users.save(new User("staff", encoder.encode("password"), "ROLE_ADMIN, ROLE_MANAGER"));
 //        };
 //    }
 }

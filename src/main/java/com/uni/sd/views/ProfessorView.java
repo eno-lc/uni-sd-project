@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 
 @PageTitle("Professors")
@@ -33,6 +34,7 @@ import java.util.Optional;
 @RouteAlias(value = "professors", layout = MainLayout.class)
 @Uses(Icon.class)
 @PermitAll
+@RolesAllowed({"ADMIN", "MANAGER"})
 public class ProfessorView extends Div implements BeforeEnterObserver{
 
     private final String Professor_ID = "ProfessorID";
