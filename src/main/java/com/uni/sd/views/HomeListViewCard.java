@@ -35,6 +35,7 @@ public class HomeListViewCard extends ListItem {
         Button button = new Button();
         button.getElement().setAttribute("theme", "badge");
         button.setText("Visit");
+        button.addClassName("visit-button");
         button.addClickListener(event -> UI.getCurrent().navigate(className));
 
         add(div, header, subtitle, button);

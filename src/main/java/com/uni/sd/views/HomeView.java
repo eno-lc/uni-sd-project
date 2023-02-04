@@ -1,6 +1,9 @@
 package com.uni.sd.views;
 
-import com.uni.sd.views.MainLayout;
+import com.uni.sd.views.CoursePosts.AlgebraView;
+import com.uni.sd.views.CoursePosts.DSAView;
+import com.uni.sd.views.CoursePosts.InfrastructureView;
+import com.uni.sd.views.CoursePosts.JavaView;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.html.H2;
@@ -9,7 +12,6 @@ import com.vaadin.flow.component.html.OrderedList;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
@@ -38,14 +40,13 @@ public class HomeView extends Main implements HasComponents, HasStyle {
         constructUI();
 
         imageContainer.add(new HomeListViewCard("Data Structures and Algorithms",
-                "https://imgs.search.brave.com/VknzcO1pJ65_0j-KSzneebBXTUsz5PLKupZR5UrMiBQ/rs:fit:1200:720:1/g:ce/aHR0cHM6Ly9taXJv/Lm1lZGl1bS5jb20v/bWF4LzI1NjAvMCpW/aXBWWUFlQ0JRU3Fz/M05DLmpwZw", "Edmond Jahjaga", StudentView.class));
+                "https://i.ibb.co/FDS0NGZ/dsa.png", "Edmond Jahjaga", DSAView.class));
         imageContainer.add(new HomeListViewCard("Algebra II",
-                "https://imgs.search.brave.com/uCMeeoEWM96PwbPZxQ7If9OTHXE6Tk6JoUkLv4Eic70/rs:fit:946:316:1/g:ce/aHR0cHM6Ly9tYXRo/Yml0c25vdGVib29r/LmNvbS9BbGdlYnJh/Mi9JbWFnZXMvQWxn/ZWJyYTJMb2dvMWEu/anBn", "Rexhep Gjergji", StudentView.class));
-        imageContainer.add(new HomeListViewCard("Advanced Java II",
-                "https://imgs.search.brave.com/3z63nswKi-RR6ao6jK04HzzBkok3WF8Y1o_Y2kl7jJI/rs:fit:1200:440:1/g:ce/aHR0cHM6Ly93d3cu/ZmlsZXBpY2tlci5p/by9hcGkvZmlsZS8w/b1dUR0N0VFJPS2tO/ejhiRndEMA", "Fatos Maxhuni", StudentView.class));
+                "https://i.ibb.co/TPZK0vp/alg.png", "Rexhep Gjergji", AlgebraView.class));
         imageContainer.add(new HomeListViewCard("Infrastructure of Servers",
-                "https://imgs.search.brave.com/jvCPbB6yp7LftVPGirvLyV3347Z_UMXWaWvytfKmCmU/rs:fit:1088:437:1/g:ce/aHR0cHM6Ly9kZWFs/cy5oYXJsZXlveGZv/cmQuY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDIwLzA3L21j/c2Utd2luZG93cy1z/ZXJ2ZXItMjAxMi1p/bXBsZW1lbnRpbmct/YW4tYWR2YW5jZWQt/c2VydmVyLWluZnJh/c3RydWN0dXJlLWV4/YW0tNzAtNDE0Lmpw/Zw", "Osman Osmani", StudentView.class));
-
+                "https://i.ibb.co/8MPRjqm/ios.png", "Osman Osmani", InfrastructureView.class));
+        imageContainer.add(new HomeListViewCard("Advanced Java II",
+                "https://i.postimg.cc/QMh4j1PW/java.png", "Fatos Maxhuni", JavaView.class));
     }
 
     private void constructUI() {

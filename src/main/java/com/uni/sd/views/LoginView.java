@@ -31,6 +31,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         loginForm.setAction("login");
         loginForm.getStyle().set("margin-bottom", "210px");
         loginForm.addClassName("login-form");
+        loginForm.setForgotPasswordButtonVisible(false);
 
 
         HorizontalLayout header = new HorizontalLayout(loginForm);
