@@ -2,11 +2,14 @@ package com.uni.sd.views;
 
 
 import com.uni.sd.data.entity.Professor;
+import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.ProfessorService;
+import com.uni.sd.data.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
@@ -24,8 +27,6 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -44,13 +45,14 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     private final String Professor_ID = "ProfessorID";
     private final String Professor_EDIT_ROUTE_TEMPLATE = "professors/%s/edit";
 
-    private final Grid<Professor> grid = new Grid<>(Professor.class, false);
+    private final Grid<User> grid = new Grid<>(User.class, false);
 
+    private TextField username;
+    private ComboBox<String> userType;
+    private TextField email;
+    private ComboBox<String> roles;
     private TextField firstName;
     private TextField lastName;
-    private TextField email;
-    private TextField phone;
-    private DatePicker dateOfBirth;
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
@@ -61,9 +63,11 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     private Professor professor;
 
     private final ProfessorService professorService;
+    private final UserService userService;
 
-    public ProfessorView(ProfessorService professorService) {
+    public ProfessorView(ProfessorService professorService, UserService userService) {
         this.professorService = professorService;
+        this.userService = userService;
         addClassNames("master-detail-view");
 
         // Create UI
@@ -74,12 +78,15 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
 
         add(getToolbar(),splitLayout);
 
-        // Configure Grid
+        grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
+        grid.addColumn("userType").setAutoWidth(true);
+        grid.addColumn("roles").setAutoWidth(true);
+
+        userType.setItems("Student", "Professor", "Staff");
+        roles.setItems("ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER");
 
 
         ConfirmDialog confirmDialog = new ConfirmDialog();
@@ -100,9 +107,11 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         delete.addClickListener(e -> confirmDialog.open());
 
 
-        grid.setItems(query -> professorService.list(
-                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());
+        grid.setItems(query -> this.userService.findAllUsers().stream()
+                .filter(user -> user.getUserType().equals("Professor"))
+                .skip(query.getPage() * query.getPageSize())
+                .limit(query.getPageSize()));
+
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -177,12 +186,14 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
+        username = new TextField("Username");
         firstName = new TextField("First Name");
         lastName = new TextField("Last Name");
         email = new TextField("Email");
-        phone = new TextField("Phone");
-        dateOfBirth = new DatePicker("Date Of Birth");
-        formLayout.add(firstName, lastName, email, phone, dateOfBirth);
+        userType = new ComboBox<>("User Type");
+        roles = new ComboBox<>("Roles");
+        formLayout.add(username, firstName, lastName, email, userType, roles);
+
         editorDiv.add(formLayout);
 
         var name = SecurityContextHolder.getContext().getAuthentication();
@@ -240,7 +251,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     }
 
     private void updateList() {
-        grid.setItems(professorService.findAllProfessors(filterText.getValue()));
+        grid.setItems(userService.findAllUsers(filterText.getValue()));
     }
 
     private Component getToolbar() {

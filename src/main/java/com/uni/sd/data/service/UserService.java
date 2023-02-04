@@ -47,6 +47,11 @@ public class UserService implements UserDetailsService {
             return userRepository.search(filterText);
         }
     }
+
+    public List<User> findAllUsers(){
+        return userRepository.findAll();
+    }
+
     public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }

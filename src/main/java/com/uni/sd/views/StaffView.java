@@ -1,11 +1,14 @@
 package com.uni.sd.views;
 
 import com.uni.sd.data.entity.Staff;
+import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.StaffService;
+import com.uni.sd.data.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -27,9 +30,9 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+
 import java.util.Optional;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import javax.annotation.security.PermitAll;
@@ -46,13 +49,15 @@ public class StaffView extends Div implements BeforeEnterObserver {
     private final String Staff_ID = "StaffID";
     private final String Staff_EDIT_ROUTE_TEMPLATE = "staff/%s/edit";
 
-    private final Grid<Staff> grid = new Grid<>(Staff.class, false);
+    private final Grid<User> grid = new Grid<>(User.class, false);
     TextField filterText = new TextField();
+    private TextField username;
+    private ComboBox<String> userType;
+    private TextField email;
+    private ComboBox<String> roles;
     private TextField firstName;
     private TextField lastName;
-    private TextField email;
-    private TextField phone;
-    private DatePicker dateOfBirth;
+
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
@@ -62,9 +67,11 @@ public class StaffView extends Div implements BeforeEnterObserver {
     private Staff Staff;
 
     private final StaffService staffService;
+    private final UserService userService;
 
-    public StaffView(StaffService staffService) {
+    public StaffView(StaffService staffService, UserService userService) {
         this.staffService = staffService;
+        this.userService = userService;
         addClassNames("master-detail-view");
 
         // Create UI
@@ -76,17 +83,22 @@ public class StaffView extends Div implements BeforeEnterObserver {
         add(getToolbar(),splitLayout);
 
         // Configure Grid
+        grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
+        grid.addColumn("userType").setAutoWidth(true);
+        grid.addColumn("roles").setAutoWidth(true);
+
+        userType.setItems("Student", "Professor", "Staff");
+        roles.setItems("ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER");
+
+        grid.setItems(query -> this.userService.findAllUsers().stream()
+                .filter(user -> user.getUserType().equals("Staff"))
+                .skip(query.getPage() * query.getPageSize())
+                .limit(query.getPageSize()));
 
 
-
-        grid.setItems(query -> staffService.list(
-                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -161,12 +173,14 @@ public class StaffView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
+        username = new TextField("Username");
         firstName = new TextField("First Name");
         lastName = new TextField("Last Name");
         email = new TextField("Email");
-        phone = new TextField("Phone");
-        dateOfBirth = new DatePicker("Date Of Birth");
-        formLayout.add(firstName, lastName, email, phone, dateOfBirth);
+        userType = new ComboBox<>("User Type");
+        roles = new ComboBox<>("Roles");
+        formLayout.add(username, firstName, lastName, email, userType, roles);
+
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -206,7 +220,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
     }
 
     private void updateList() {
-        grid.setItems(staffService.findAllStaff(filterText.getValue()));
+        grid.setItems(userService.findAllUsers(filterText.getValue()));
     }
 
     private Component getToolbar() {
