@@ -1,5 +1,5 @@
 package com.uni.sd.views;
-import com.uni.sd.views.MainLayout;
+
 import com.vaadin.collaborationengine.CollaborationAvatarGroup;
 import com.vaadin.collaborationengine.CollaborationMessageInput;
 import com.vaadin.collaborationengine.CollaborationMessageList;
@@ -29,6 +29,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import com.vaadin.flow.theme.lumo.LumoUtility.Overflow;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.Width;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
 import java.util.UUID;
@@ -100,7 +101,8 @@ public class ChatView extends HorizontalLayout {
         // identifier, and the user's real name. You can also provide the users
         // avatar by passing an url to the image as a third parameter, or by
         // configuring an `ImageProvider` to `avatarGroup`.
-        UserInfo userInfo = new UserInfo(UUID.randomUUID().toString(), "Steve Lange");
+        var name = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserInfo userInfo = new UserInfo(name, name);
 
         tabs = new Tabs();
         for (ChatInfo chat : chats) {
