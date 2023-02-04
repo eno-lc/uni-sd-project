@@ -1,17 +1,13 @@
 package com.uni.sd.views;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.cookieconsent.CookieConsent;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterListener;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.Lumo;
 
 
 @Route(value = "login")
@@ -19,8 +15,6 @@ import com.vaadin.flow.theme.lumo.Lumo;
 public class LoginView extends VerticalLayout implements BeforeEnterListener {
 
    private final LoginForm loginForm = new LoginForm();
-    public static boolean isDark = false;
-
 
     public LoginView() {
         addClassName("login-view");
