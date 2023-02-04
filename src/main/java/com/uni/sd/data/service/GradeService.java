@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,15 @@ public class GradeService {
 
     public Page<Grade> list(Pageable pageable, Specification<Grade> filter) {
         return repository.findAll(filter, pageable);
+    }
+
+    public List<Grade> findAllGrades(String filterText){
+
+        if(filterText == null || filterText.isEmpty()){
+            return repository.findAll();
+        } else {
+            return repository.search(filterText);
+        }
     }
 
     public int count() {
