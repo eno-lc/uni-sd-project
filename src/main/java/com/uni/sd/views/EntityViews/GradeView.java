@@ -1,7 +1,8 @@
-package com.uni.sd.views;
+package com.uni.sd.views.EntityViews;
 
 import com.uni.sd.data.entity.Grade;
 import com.uni.sd.data.service.GradeService;
+import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

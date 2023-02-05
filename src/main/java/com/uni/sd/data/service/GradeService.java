@@ -1,9 +1,7 @@
 package com.uni.sd.data.service;
 
 import com.uni.sd.data.entity.Grade;
-import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.repository.GradeRepository;
-import com.uni.sd.data.repository.ProfessorRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

@@ -1,4 +1,4 @@
-package com.uni.sd.views;
+package com.uni.sd.views.GeneralViews;
 
 import com.vaadin.collaborationengine.CollaborationAvatarGroup;
 import com.vaadin.collaborationengine.CollaborationMessageInput;
@@ -32,7 +32,6 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Width;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
-import java.util.UUID;
 
 @PageTitle("Chat")
 @Route(value = "chat", layout = MainLayout.class)

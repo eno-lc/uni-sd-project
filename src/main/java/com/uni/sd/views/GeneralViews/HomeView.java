@@ -1,4 +1,4 @@
-package com.uni.sd.views;
+package com.uni.sd.views.GeneralViews;
 
 import com.uni.sd.views.CoursePosts.AlgebraView;
 import com.uni.sd.views.CoursePosts.DSAView;

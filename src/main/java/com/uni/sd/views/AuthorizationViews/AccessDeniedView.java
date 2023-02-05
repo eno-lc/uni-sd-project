@@ -1,6 +1,6 @@
 package com.uni.sd.views.AuthorizationViews;
 
-import com.uni.sd.views.MainLayout;
+import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;

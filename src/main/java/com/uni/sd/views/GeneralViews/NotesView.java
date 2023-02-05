@@ -1,4 +1,4 @@
-package com.uni.sd.views;
+package com.uni.sd.views.GeneralViews;
 
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.richtexteditor.RichTextEditor;

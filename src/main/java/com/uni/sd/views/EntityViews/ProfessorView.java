@@ -1,19 +1,17 @@
-package com.uni.sd.views;
+package com.uni.sd.views.EntityViews;
 
 
 import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.ProfessorService;
 import com.uni.sd.data.service.UserService;
+import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -28,7 +26,6 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;

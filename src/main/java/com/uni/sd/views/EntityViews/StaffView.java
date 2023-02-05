@@ -1,17 +1,15 @@
-package com.uni.sd.views;
+package com.uni.sd.views.EntityViews;
 
 import com.uni.sd.data.entity.Staff;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.StaffService;
 import com.uni.sd.data.service.UserService;
+import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;

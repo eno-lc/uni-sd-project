@@ -1,4 +1,4 @@
-package com.uni.sd.views;
+package com.uni.sd.views.GeneralViews;
 
 import com.vaadin.flow.component.cookieconsent.CookieConsent;
 import com.vaadin.flow.component.login.LoginForm;

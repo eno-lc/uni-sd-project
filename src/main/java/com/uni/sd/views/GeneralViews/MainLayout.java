@@ -1,9 +1,10 @@
-package com.uni.sd.views;
+package com.uni.sd.views.GeneralViews;
 
 
 import com.uni.sd.components.appnav.AppNav;
 import com.uni.sd.components.appnav.AppNavItem;
 import com.uni.sd.security.SecurityService;
+import com.uni.sd.views.EntityViews.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;

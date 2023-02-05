@@ -2,7 +2,7 @@ package com.uni.sd.security;
 
 
 import com.uni.sd.data.service.UserService;
-import com.uni.sd.views.LoginView;
+import com.uni.sd.views.GeneralViews.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

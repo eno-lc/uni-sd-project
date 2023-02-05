@@ -1,7 +1,7 @@
 package com.uni.sd.views.CoursePosts;
 
 import com.uni.sd.data.entity.Professor;
-import com.uni.sd.views.MainLayout;
+import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
