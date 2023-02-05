@@ -1,6 +1,8 @@
 package com.uni.sd.views.EntityViews;
 
 
+import com.uni.sd.data.dto.ProfessorDto;
+import com.uni.sd.data.dto.UserDto;
 import com.uni.sd.data.entity.Professor;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.ProfessorService;
@@ -42,7 +44,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     private final String Professor_ID = "ProfessorID";
     private final String Professor_EDIT_ROUTE_TEMPLATE = "professors/%s/edit";
 
-    private final Grid<User> grid = new Grid<>(User.class, false);
+    private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
 
     private TextField username;
     private ComboBox<String> userType;
@@ -55,9 +57,9 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     private final Button save = new Button("Save");
     private final Button delete = new Button("Delete");
 
-    private final BeanValidationBinder<Professor> binder;
+    private final BeanValidationBinder<ProfessorDto> binder;
     TextField filterText = new TextField();
-    private Professor professor;
+    private ProfessorDto professor;
 
     private final ProfessorService professorService;
     private final UserService userService;
@@ -123,7 +125,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
             }
         });
 
-        binder = new BeanValidationBinder<>(Professor.class);
+        binder = new BeanValidationBinder<>(ProfessorDto.class);
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -134,7 +136,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         save.addClickListener(e -> {
             try {
                 if (this.professor == null) {
-                    this.professor = new Professor();
+                    this.professor = new ProfessorDto();
                 }
                 binder.writeBean(this.professor);
                 professorService.update(this.professor);
@@ -157,7 +159,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> ProfessorId = event.getRouteParameters().get(Professor_ID).map(Long::parseLong);
         if (ProfessorId.isPresent()) {
-            Optional<Professor> professorFromBackEnd = professorService.get(ProfessorId.get());
+            Optional<ProfessorDto> professorFromBackEnd = Optional.ofNullable(professorService.get(ProfessorId.get()));
             if (professorFromBackEnd.isPresent()) {
                 populateForm(professorFromBackEnd.get());
             } else {
@@ -189,7 +191,7 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
         populateForm(null);
     }
 
-    private void populateForm(Professor value) {
+    private void populateForm(ProfessorDto value) {
         this.professor = value;
         binder.readBean(this.professor);
 

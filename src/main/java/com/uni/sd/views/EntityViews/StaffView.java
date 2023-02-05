@@ -1,5 +1,7 @@
 package com.uni.sd.views.EntityViews;
 
+import com.uni.sd.data.dto.StaffDto;
+import com.uni.sd.data.dto.UserDto;
 import com.uni.sd.data.entity.Staff;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.StaffService;
@@ -47,7 +49,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
     private final String Staff_ID = "StaffID";
     private final String Staff_EDIT_ROUTE_TEMPLATE = "staff/%s/edit";
 
-    private final Grid<User> grid = new Grid<>(User.class, false);
+    private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
     TextField filterText = new TextField();
     private TextField username;
     private ComboBox<String> userType;
@@ -60,9 +62,9 @@ public class StaffView extends Div implements BeforeEnterObserver {
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
 
-    private final BeanValidationBinder<Staff> binder;
+    private final BeanValidationBinder<StaffDto> binder;
 
-    private Staff Staff;
+    private StaffDto staff;
 
     private final StaffService staffService;
     private final UserService userService;
@@ -108,7 +110,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
             }
         });
 
-        binder = new BeanValidationBinder<>(Staff.class);
+        binder = new BeanValidationBinder<>(StaffDto.class);
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -118,11 +120,11 @@ public class StaffView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.Staff == null) {
-                    this.Staff = new Staff();
+                if (this.staff == null) {
+                    this.staff = new StaffDto();
                 }
-                binder.writeBean(this.Staff);
-                staffService.update(this.Staff);
+                binder.writeBean(this.staff);
+                staffService.update(this.staff);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -142,7 +144,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> StaffId = event.getRouteParameters().get(Staff_ID).map(Long::parseLong);
         if (StaffId.isPresent()) {
-            Optional<Staff> staffFromBackend = staffService.get(StaffId.get());
+            Optional<StaffDto> staffFromBackend = Optional.ofNullable(staffService.get(StaffId.get()));
             if (staffFromBackend.isPresent()) {
                 populateForm(staffFromBackend.get());
             } else {
@@ -174,9 +176,9 @@ public class StaffView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(Staff value) {
-        this.Staff = value;
-        binder.readBean(this.Staff);
+    private void populateForm(StaffDto value) {
+        this.staff = value;
+        binder.readBean(this.staff);
 
     }
 

@@ -1,5 +1,7 @@
 package com.uni.sd.views.EntityViews;
 
+import com.uni.sd.data.dto.StudentDto;
+import com.uni.sd.data.dto.UserDto;
 import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.StudentService;
@@ -44,7 +46,7 @@ public class StudentView extends Div implements BeforeEnterObserver {
     private final String Student_ID = "StudentID";
     private final String Student_EDIT_ROUTE_TEMPLATE = "students/%s/edit";
 
-    private final Grid<User> grid = new Grid<>(User.class, false);
+    private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
 
     private TextField username;
     private ComboBox<String> userType;
@@ -57,9 +59,9 @@ public class StudentView extends Div implements BeforeEnterObserver {
     private final Button save = new Button("Save");
 
     private final Button delete = new Button("Delete");
-    private final BeanValidationBinder<Student> binder;
+    private final BeanValidationBinder<StudentDto> binder;
 
-    private Student Student;
+    private StudentDto studentDto;
     TextField filterText = new TextField();
     private final StudentService StudentService;
     private final UserService userService;
@@ -92,8 +94,8 @@ public class StudentView extends Div implements BeforeEnterObserver {
         confirmDialog.setHeader("Confirmation");
         confirmDialog.setText("Are you sure you want to delete this student?");
         confirmDialog.setConfirmButton("Delete", e -> {
-            if (this.Student != null && this.Student.getId() != null) {
-                StudentService.delete(this.Student.getId());
+            if (this.studentDto != null && this.studentDto.getId() != null) {
+                StudentService.delete(this.studentDto.getId());
                 clearForm();
                 refreshGrid();
                 Notification.show("Data deleted");
@@ -121,7 +123,7 @@ public class StudentView extends Div implements BeforeEnterObserver {
             }
         });
 
-        binder = new BeanValidationBinder<>(Student.class);
+        binder = new BeanValidationBinder<>(StudentDto.class);
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -131,11 +133,11 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.Student == null) {
-                    this.Student = new Student();
+                if (this.studentDto == null) {
+                    this.studentDto = new StudentDto();
                 }
-                binder.writeBean(this.Student);
-                StudentService.update(this.Student);
+                binder.writeBean(this.studentDto);
+                StudentService.update(this.studentDto);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -155,7 +157,7 @@ public class StudentView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> StudentId = event.getRouteParameters().get(Student_ID).map(Long::parseLong);
         if (StudentId.isPresent()) {
-            Optional<Student> StudentFromBackend = StudentService.get(StudentId.get());
+            Optional<StudentDto> StudentFromBackend = Optional.ofNullable(StudentService.get(StudentId.get()));
             if (StudentFromBackend.isPresent()) {
                 populateForm(StudentFromBackend.get());
             } else {
@@ -185,9 +187,9 @@ public class StudentView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(Student value) {
-        this.Student = value;
-        binder.readBean(this.Student);
+    private void populateForm(StudentDto value) {
+        this.studentDto = value;
+        binder.readBean(this.studentDto);
 
     }
 

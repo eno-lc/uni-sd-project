@@ -1,5 +1,6 @@
 package com.uni.sd.views.EntityViews;
 
+import com.uni.sd.data.dto.UserDto;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.UserService;
 import com.uni.sd.views.GeneralViews.MainLayout;
@@ -38,10 +39,9 @@ public class ProfileView extends VerticalLayout {
     private final TextField lastName = new TextField("Last Name");
     private final ComboBox<String> userType = new ComboBox<>("User Type");
 
-    private final Binder<User> binder = new BeanValidationBinder<>(User.class);
+    private final Binder<UserDto> binder = new BeanValidationBinder<>(UserDto.class);
     private final Button save = new Button("Save");
     private final UserService userService;
-    Notification notification = new Notification("Profile updated successfully", 3000);
     public ProfileView(UserService userService, UserService userService1) {
         this.userService = userService1;
         roles.setEnabled(false);
@@ -69,7 +69,6 @@ public class ProfileView extends VerticalLayout {
         add(createFormLayout());
         add(createButtonLayout());
     }
-    //jom tu e rujt current user which means no changes
     private void validateAndSave() {
         var user = userService.getCurrentUser();
         try{

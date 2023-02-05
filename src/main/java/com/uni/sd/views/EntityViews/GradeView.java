@@ -1,6 +1,6 @@
 package com.uni.sd.views.EntityViews;
 
-import com.uni.sd.data.entity.Grade;
+import com.uni.sd.data.dto.GradeDto;
 import com.uni.sd.data.service.GradeService;
 import com.uni.sd.views.GeneralViews.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -42,7 +42,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
     private final String Grade_ID = "GradeID";
     private final String Grade_EDIT_ROUTE_TEMPLATE = "grade/%s/edit";
 
-    private final Grid<Grade> grid = new Grid<>(Grade.class, false);
+    private final Grid<GradeDto> grid = new Grid<>(GradeDto.class, false);
 
     TextField filterText = new TextField();
     private TextField course;
@@ -55,9 +55,9 @@ public class GradeView extends Div implements BeforeEnterObserver {
     private final Button save = new Button("Save");
     private final Button delete = new Button("Delete");
 
-    private final BeanValidationBinder<Grade> binder;
+    private final BeanValidationBinder<GradeDto> binder;
     private final GradeService gradeService;
-    private Grade gradeInstance;
+    private GradeDto gradeInstance;
 
     public GradeView( GradeService gradeService) {
         this.gradeService = gradeService;
@@ -84,6 +84,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         grid.setItems(query -> gradeService.list(
                         PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
+
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -97,7 +98,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         });
 
 
-        binder = new BeanValidationBinder<>(Grade.class);
+        binder = new BeanValidationBinder<>(GradeDto.class);
         binder.bindInstanceFields(this);
 
 
@@ -105,6 +106,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         confirmDialog.setConfirmButtonTheme("error primary");
         confirmDialog.setHeader("Confirmation");
         confirmDialog.setText("Are you sure you want to delete this grade?");
+
         confirmDialog.setConfirmButton("Delete", e -> {
             if (this.gradeInstance != null && this.gradeInstance.getId() != null) {
                 gradeService.delete(this.gradeInstance.getId());
@@ -114,6 +116,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
                 UI.getCurrent().navigate(GradeView.class);
             }
         });
+
         confirmDialog.setCancelButton("Cancel", e -> confirmDialog.close());
 
         delete.addClickListener(e -> confirmDialog.open());
@@ -128,8 +131,9 @@ public class GradeView extends Div implements BeforeEnterObserver {
         save.addClickListener(e -> {
             try {
                 if (this.gradeInstance == null) {
-                    this.gradeInstance = new Grade();
+                    this.gradeInstance = new GradeDto();
                 }
+
                 binder.writeBean(this.gradeInstance);
                 gradeService.update(this.gradeInstance);
                 clearForm();
@@ -151,7 +155,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> GradeId = event.getRouteParameters().get(Grade_ID).map(Long::parseLong);
         if (GradeId.isPresent()) {
-            Optional<Grade> gradeFromBackend = gradeService.get(GradeId.get());
+            Optional<GradeDto> gradeFromBackend = Optional.ofNullable(gradeService.get(GradeId.get()));
             if (gradeFromBackend.isPresent()) {
                 populateForm(gradeFromBackend.get());
             } else {
@@ -233,7 +237,7 @@ public class GradeView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(Grade value) {
+    private void populateForm(GradeDto value) {
         this.gradeInstance = value;
         binder.readBean(this.gradeInstance);
 

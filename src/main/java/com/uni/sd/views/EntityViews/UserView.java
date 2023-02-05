@@ -1,5 +1,6 @@
 package com.uni.sd.views.EntityViews;
 
+import com.uni.sd.data.dto.UserDto;
 import com.uni.sd.data.entity.User;
 import com.uni.sd.data.service.UserService;
 import com.uni.sd.views.GeneralViews.MainLayout;
@@ -43,7 +44,7 @@ public class UserView extends Div implements BeforeEnterObserver {
     private final String User_ID = "UserID";
     private final String User_EDIT_ROUTE_TEMPLATE = "users/%s/edit";
 
-    private final Grid<User> grid = new Grid<>(User.class, false);
+    private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
 
     private TextField username;
     private ComboBox<String> userType;
@@ -57,9 +58,9 @@ public class UserView extends Div implements BeforeEnterObserver {
     private final Button save = new Button("Save");
 
     private final Button delete = new Button("Delete");
-    private final BeanValidationBinder<User> binder;
+    private final BeanValidationBinder<UserDto> binder;
 
-    private User user;
+    private UserDto user;
     TextField filterText = new TextField();
     private final UserService userService;
 
@@ -117,7 +118,7 @@ public class UserView extends Div implements BeforeEnterObserver {
             }
         });
 
-        binder = new BeanValidationBinder<>(User.class);
+        binder = new BeanValidationBinder<>(UserDto.class);
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -128,10 +129,10 @@ public class UserView extends Div implements BeforeEnterObserver {
         save.addClickListener(e -> {
             try {
                 if (this.user == null) {
-                    this.user = new User();
+                    this.user = new UserDto();
                 }
                 binder.writeBean(this.user);
-                userService.updateUser(this.user);
+                userService.saveUser(this.user);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -151,7 +152,7 @@ public class UserView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> UserId = event.getRouteParameters().get(User_ID).map(Long::parseLong);
         if (UserId.isPresent()) {
-            Optional<User> userFromBackend = userService.get(UserId.get());
+            Optional<UserDto> userFromBackend = Optional.ofNullable(userService.get(UserId.get()));
             if (userFromBackend.isPresent()) {
                 populateForm(userFromBackend.get());
             } else {
@@ -232,7 +233,7 @@ public class UserView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(User value) {
+    private void populateForm(UserDto value) {
         this.user = value;
         binder.readBean(this.user);
 

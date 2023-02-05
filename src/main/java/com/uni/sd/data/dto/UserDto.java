@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 public class UserDto extends AbstractEntity {
     private String username;
+    private String password;
     private String roles;
     private String firstName;
     private String lastName;
@@ -15,9 +16,17 @@ public class UserDto extends AbstractEntity {
     private String email;
     private String userType;
 
+    public String getUserType() {
+        return userType;
+    }
 
-    public UserDto(String username, String roles, String firstName, String lastName, LocalDate birthday, String email, String userType) {
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public UserDto(String username, String password, String roles, String firstName, String lastName, LocalDate birthday, String email, String userType) {
         this.username = username;
+        this.password = password;
         this.roles = roles;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -30,8 +39,10 @@ public class UserDto extends AbstractEntity {
 
     public UserDto(String username, String password, String roles) {
         this.username = username;
+        this.password = password;
         this.roles = roles;
     }
+
 
     public String getUsername() {
         return username;
@@ -39,6 +50,14 @@ public class UserDto extends AbstractEntity {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRoles() {
@@ -79,13 +98,5 @@ public class UserDto extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
     }
 }

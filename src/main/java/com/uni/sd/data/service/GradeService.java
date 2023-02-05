@@ -1,7 +1,9 @@
 package com.uni.sd.data.service;
 
+import com.uni.sd.data.dto.GradeDto;
 import com.uni.sd.data.entity.Grade;
 import com.uni.sd.data.repository.GradeRepository;
+import com.uni.sd.mappers.GradeMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GradeService {
@@ -19,35 +22,45 @@ public class GradeService {
         this.repository = repository;
     }
 
-    public Optional<Grade> get(Long id) {
-        return repository.findById(id);
+    public GradeDto get(Long id) {
+        Optional<Grade> entity = repository.findById(id);
+        Grade grade = entity.get();
+        return GradeMapper.mapToGradeDto(grade);
     }
 
-    public Grade update(Grade entity) {
-        return repository.save(entity);
+    public GradeDto update(GradeDto entity) {
+        Grade grade = GradeMapper.mapToGrade(entity);
+        Grade gradeSaved = repository.save(grade);
+        return GradeMapper.mapToGradeDto(gradeSaved);
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
-    public Page<Grade> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<GradeDto> list(Pageable pageable) {
+        Page<Grade> grades = repository.findAll(pageable);
+        return grades.map(GradeMapper::mapToGradeDto);
     }
 
-    public Page<Grade> list(Pageable pageable, Specification<Grade> filter) {
-        return repository.findAll(filter, pageable);
+    public Page<GradeDto> list(Pageable pageable, Specification<Grade> filter) {
+        Page<Grade> grades = repository.findAll(filter, pageable);
+        return grades.map(GradeMapper::mapToGradeDto);
     }
 
-    public List<Grade> findAllGrades(String filterText){
+    public List<GradeDto> findAllGrades(String filterText){
+
+        List<Grade> grades = repository.findAll();
 
         if(filterText == null || filterText.isEmpty()){
-            return repository.findAll();
+            return grades.stream().map(GradeMapper::mapToGradeDto).collect(Collectors.toList());
         } else {
-            return repository.search(filterText);
+            List<Grade> gradeList = repository.search(filterText);
+            return gradeList.stream()
+                    .map(GradeMapper::mapToGradeDto)
+                    .collect(Collectors.toList());
         }
     }
-
     public int count() {
         return (int) repository.count();
     }

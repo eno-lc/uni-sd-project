@@ -14,6 +14,8 @@ public class UserMapper {
         userDto.setUsername(userEntity.getUsername());
         userDto.setBirthday(userEntity.getBirthday());
         userDto.setUserType(userEntity.getUserType());
+        userDto.setRoles(userEntity.getRoles());
+        userDto.setPassword(userEntity.getPassword());
         return userDto;
     }
 
@@ -26,6 +28,8 @@ public class UserMapper {
         userEntity.setUsername(userDto.getUsername());
         userEntity.setBirthday(userDto.getBirthday());
         userEntity.setUserType(userDto.getUserType());
+        userEntity.setRoles(userDto.getRoles());
+        userEntity.setPassword(userDto.getPassword());
         return userEntity;
     }
 

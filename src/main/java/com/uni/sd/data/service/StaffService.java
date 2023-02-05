@@ -1,9 +1,11 @@
 package com.uni.sd.data.service;
 
+import com.uni.sd.data.dto.StaffDto;
 import com.uni.sd.data.entity.Staff;
 import com.uni.sd.data.entity.Student;
 import com.uni.sd.data.repository.StaffRepository;
 import com.uni.sd.data.repository.StudentRepository;
+import com.uni.sd.mappers.StaffMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StaffService {
@@ -20,32 +23,44 @@ public class StaffService {
         this.repository = repository;
     }
 
-    public Optional<Staff> get(Long id) {
-        return repository.findById(id);
+    public StaffDto get(Long id) {
+        Optional<Staff> entity = repository.findById(id);
+        Staff staff = entity.get();
+        return StaffMapper.mapToStaffDto(staff);
     }
 
-    public Staff update(Staff entity) {
-        return repository.save(entity);
+    public StaffDto update(StaffDto entity) {
+        Staff staff = StaffMapper.mapToStaff(entity);
+        Staff staffSaved = repository.save(staff);
+        return StaffMapper.mapToStaffDto(staffSaved);
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
-    public Page<Staff> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<StaffDto> list(Pageable pageable) {
+        Page<Staff> staffs = repository.findAll(pageable);
+        return staffs.map(StaffMapper::mapToStaffDto);
     }
 
-    public Page<Staff> list(Pageable pageable, Specification<Staff> filter) {
-        return repository.findAll(filter, pageable);
+    public Page<StaffDto> list(Pageable pageable, Specification<Staff> filter) {
+        Page<Staff> staffs = repository.findAll(filter, pageable);
+        return staffs.map(StaffMapper::mapToStaffDto);
     }
 
-    public List<Staff> findAllStaff(String filterText){
+
+    public List<StaffDto> findAllStaff(String filterText){
+
+        List<Staff> staffs = repository.findAll();
 
         if(filterText == null || filterText.isEmpty()){
-            return repository.findAll();
+            return staffs.stream().map(StaffMapper::mapToStaffDto).collect(Collectors.toList());
         } else {
-            return repository.search(filterText);
+            List<Staff> staffList = repository.search(filterText);
+            return staffList.stream()
+                    .map(StaffMapper::mapToStaffDto)
+                    .collect(Collectors.toList());
         }
     }
 
