@@ -101,14 +101,7 @@ public class StaffView extends Div implements BeforeEnterObserver {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(Staff_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
-            } else {
-                clearForm();
-                UI.getCurrent().navigate(StaffView.class);
-            }
-        });
+
 
         binder = new BeanValidationBinder<>(StaffDto.class);
         binder.bindInstanceFields(this);

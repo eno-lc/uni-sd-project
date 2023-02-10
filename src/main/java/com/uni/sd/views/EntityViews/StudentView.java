@@ -114,14 +114,7 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(Student_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
-            } else {
-                clearForm();
-                UI.getCurrent().navigate(StudentView.class);
-            }
-        });
+
 
         binder = new BeanValidationBinder<>(StudentDto.class);
         binder.bindInstanceFields(this);
