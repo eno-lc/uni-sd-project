@@ -47,16 +47,10 @@ import javax.annotation.security.RolesAllowed;
 public class StaffView extends Div implements BeforeEnterObserver {
 
     private final String Staff_ID = "StaffID";
-    private final String Staff_EDIT_ROUTE_TEMPLATE = "staff/%s/edit";
-
     private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
     TextField filterText = new TextField();
-    private TextField username;
     private ComboBox<String> userType;
-    private TextField email;
     private ComboBox<String> roles;
-    private TextField firstName;
-    private TextField lastName;
 
 
     private final Button cancel = new Button("Cancel");

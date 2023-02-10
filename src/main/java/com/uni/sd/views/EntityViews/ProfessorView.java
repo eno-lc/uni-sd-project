@@ -46,12 +46,9 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
 
     private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
 
-    private TextField username;
+
     private ComboBox<String> userType;
-    private TextField email;
     private ComboBox<String> roles;
-    private TextField firstName;
-    private TextField lastName;
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
@@ -115,15 +112,6 @@ public class ProfessorView extends Div implements BeforeEnterObserver{
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        // when a row is selected or deselected, populate form
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(Professor_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
-            } else {
-                clearForm();
-                UI.getCurrent().navigate(ProfessorView.class);
-            }
-        });
 
         binder = new BeanValidationBinder<>(ProfessorDto.class);
         binder.bindInstanceFields(this);
