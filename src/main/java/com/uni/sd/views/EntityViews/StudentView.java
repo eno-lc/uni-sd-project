@@ -44,11 +44,16 @@ import javax.annotation.security.RolesAllowed;
 public class StudentView extends Div implements BeforeEnterObserver {
 
     private final String Student_ID = "StudentID";
+    private final String Student_EDIT_ROUTE_TEMPLATE = "students/%s/edit";
 
     private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
 
+    private TextField username;
     private ComboBox<String> userType;
+    private TextField email;
     private ComboBox<String> roles;
+    private TextField firstName;
+    private TextField lastName;
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
@@ -109,7 +114,14 @@ public class StudentView extends Div implements BeforeEnterObserver {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                UI.getCurrent().navigate(String.format(Student_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+            } else {
+                clearForm();
+                UI.getCurrent().navigate(StudentView.class);
+            }
+        });
 
         binder = new BeanValidationBinder<>(StudentDto.class);
         binder.bindInstanceFields(this);

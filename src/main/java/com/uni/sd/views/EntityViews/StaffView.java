@@ -47,10 +47,16 @@ import javax.annotation.security.RolesAllowed;
 public class StaffView extends Div implements BeforeEnterObserver {
 
     private final String Staff_ID = "StaffID";
+    private final String Staff_EDIT_ROUTE_TEMPLATE = "staff/%s/edit";
+
     private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);
     TextField filterText = new TextField();
+    private TextField username;
     private ComboBox<String> userType;
+    private TextField email;
     private ComboBox<String> roles;
+    private TextField firstName;
+    private TextField lastName;
 
 
     private final Button cancel = new Button("Cancel");
@@ -95,7 +101,14 @@ public class StaffView extends Div implements BeforeEnterObserver {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                UI.getCurrent().navigate(String.format(Staff_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+            } else {
+                clearForm();
+                UI.getCurrent().navigate(StaffView.class);
+            }
+        });
 
         binder = new BeanValidationBinder<>(StaffDto.class);
         binder.bindInstanceFields(this);
